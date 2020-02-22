@@ -2,6 +2,7 @@
 #include <GL/freeglut.h>
 
 #include "debug.h"
+#include "vector.h"
 #include "render.h"
 
 void Draw_Test(){
@@ -28,20 +29,11 @@ void Draw_Test2(){
 
 int main(int argc, char** argv){
 
-	int first_render_func_id;
+	Vector3f vec1 = Vector3f();
+	Vector3f vec2 = Vector3f(-1, -2, -3);
+	Vector3f vec3 = vec1 - vec2;
 
-	Debug::Info    << "Test" << std::endl;
-	Debug::Warning << "Test" << std::endl;
-	Debug::Error   << "Test" << std::endl;
-
-	Render::Init(&argc, argv);
-
-	first_render_func_id = Render::Add_Render_Function(Draw_Test);
-	std::cout << first_render_func_id << std::endl;
-	std::cout << Render::Add_Render_Function(Draw_Test2) << std::endl;
-	Render::Delete_Render_Funtion(-1);
-
-	glutMainLoop();
+	Debug::Info << vec3 << std::endl;
 
 	return 0;
 }

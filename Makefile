@@ -9,7 +9,7 @@ DBG=gdb
 DEL=rm
 DELARGS=-frdv
 
-SRC=src/main.o src/render.o src/debug.o
+OBJ=src/render.o src/debug.o src/vector.o src/main.o
 
 all:
 	@echo "You need to add one of the following target :) : debug / release / clean"
@@ -19,12 +19,12 @@ clean:
 	$(DEL) $(DELARGS) debug
 	$(DEL) $(DELARGS) release
 
-release: $(SRC)
+release: $(OBJ)
 	$(LD) $(LDFLAGS) -O2 -o $@ $^
 
-debug: $(SRC)
+debug: $(OBJ)
 	$(LD) $(LDFLAGS) -g -o $@ $^
 	$(DBG) $@
 
-.o: .c
+.o: .cpp
 	$(CPP) $(CPPFLAGS) -o $@ $<
