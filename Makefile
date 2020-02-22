@@ -9,7 +9,7 @@ DBG=gdb
 DEL=rm
 DELARGS=-frdv
 
-SRC=src/main.o src/render.o
+SRC=src/main.o src/render.o src/debug.o
 
 all:
 	@echo "You need to add one of the following target :) : debug / release / clean"

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <GL/freeglut.h>
 
+#include "debug.h"
 #include "render.h"
 
 void Draw_Test(){
@@ -29,12 +30,16 @@ int main(int argc, char** argv){
 
 	int first_render_func_id;
 
+	Debug::Info    << "Test" << std::endl;
+	Debug::Warning << "Test" << std::endl;
+	Debug::Error   << "Test" << std::endl;
+
 	Render::Init(&argc, argv);
 
 	first_render_func_id = Render::Add_Render_Function(Draw_Test);
 	std::cout << first_render_func_id << std::endl;
 	std::cout << Render::Add_Render_Function(Draw_Test2) << std::endl;
-	Render::Delete_Render_Funtion(first_render_func_id);
+	Render::Delete_Render_Funtion(-1);
 
 	glutMainLoop();
 

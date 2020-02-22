@@ -2,6 +2,7 @@
 
 #include <GL/freeglut.h>
 
+#include "debug.h"
 #include "render.h"
 
 std::vector<void(*)()> display_functions;
@@ -38,8 +39,10 @@ int Render::Add_Render_Function(void (*function)()){
 }
 
 void Render::Delete_Render_Funtion(int function_id){
-	if(function_id >= display_functions.size()){
-		
+	if(function_id >= display_functions.size() || function_id < 0){
+		Debug::Error << "Try to delete an out of bounds render function" << std::endl;
+		Debug::Error << "The wanted render function ID: " << function_id << std::endl;		
+		Debug::Error << "Number of render functions: " << display_functions.size() << std::endl;		
 		return;
 	}
 
