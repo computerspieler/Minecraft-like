@@ -17,6 +17,9 @@ int Render::Init(int* argc, char** argv){
 
 	glutDisplayFunc(Draw);
 
+	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_FLAT);
+
 	camera = new Camera();
 
 	return 0;
@@ -25,6 +28,7 @@ int Render::Init(int* argc, char** argv){
 void Render::Draw(){
 	int i;
 
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0, 0, 0, 0);
 
 	for(i = 0; i < (int)draw_callbacks.size(); i++){
