@@ -8,6 +8,8 @@ namespace Render{
 	public:
 		Camera();
 
+		void Projection_Set(int width, int height);
+
 		Vector2f position, rotation;
 	};
 };
