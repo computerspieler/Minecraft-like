@@ -8,7 +8,7 @@ namespace Render{
 	public:
 		Camera();
 
-		Vector3f position, rotation;
+		Vector2f position, rotation;
 	};
 };
 

@@ -55,7 +55,7 @@ int main(int argc, char** argv){
 
 	glutIdleFunc(Idle_Test);
 	glutKeyboardFunc(Keyboard_Test);
-	Timer_Test(0);
+	glutTimerFunc(1000, Timer_Test, 1);
 
 	glutMainLoop();
 
