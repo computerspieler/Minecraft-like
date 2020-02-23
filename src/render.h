@@ -10,11 +10,11 @@ namespace Render{
 	int  Init(int* argc, char** argv);
 	void Draw();
 
-	int  Add_Render_Function(void (*function)());
-	void Delete_Render_Funtion(int function_id);
-	void Clear_Render_Funtions();
+	int  Draw_Callback_Add(void (*function)());
+	void Draw_Callback_Delete(int function_id);
+	void Draw_Callbacks_Delete();
 
-	Camera* get_Camera();
+	Camera* Camera_Get();
 };
 
 #endif
