@@ -1,5 +1,3 @@
-#include <ostream>
-
 #include "vector.h"
 
 Vector3f::Vector3f(): x(0), y(0), z(0) {}

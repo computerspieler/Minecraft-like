@@ -6,6 +6,7 @@
 #include "render.h"
 
 std::vector<void(*)()> display_functions;
+Render::Camera* camera;
 
 int Render::Init(int* argc, char** argv){
 	glutInit(argc, argv);
@@ -16,6 +17,8 @@ int Render::Init(int* argc, char** argv){
 
 	glutDisplayFunc(Draw);
 
+	camera = new Camera();
+
 	return 0;
 }
 
@@ -24,7 +27,7 @@ void Render::Draw(){
 
 	glClearColor(0, 0, 0, 0);
 
-	for(i = 0; i < display_functions.size(); i++){
+	for(i = 0; i < (int)display_functions.size(); i++){
 		if(display_functions[i] != nullptr)
 			display_functions[i]();
 	}
@@ -39,7 +42,7 @@ int Render::Add_Render_Function(void (*function)()){
 }
 
 void Render::Delete_Render_Funtion(int function_id){
-	if(function_id >= display_functions.size() || function_id < 0){
+	if(function_id >= (int)display_functions.size() || function_id < 0){
 		Debug::Error << "Try to delete an out of bounds render function" << std::endl;
 		Debug::Error << "The wanted render function ID: " << function_id << std::endl;		
 		Debug::Error << "Number of render functions: " << display_functions.size() << std::endl;		
@@ -48,3 +51,9 @@ void Render::Delete_Render_Funtion(int function_id){
 
 	display_functions.erase(display_functions.begin() + function_id);
 }
+
+void Render::Clear_Render_Funtions(){
+	display_functions.clear();
+}
+
+Render::Camera* Render::get_Camera(){ return camera; }

@@ -9,13 +9,14 @@ DBG=gdb
 DEL=rm
 DELARGS=-frdv
 
-OBJ=src/render.o src/debug.o src/vector.o src/main.o
+OBJ=src/main.o src/render.o src/debug.o src/vector.o \
+	src/camera.o
 
 all:
 	@echo "You need to add one of the following target :) : debug / release / clean"
 
 clean:
-	$(DEL) $(DELARGS) $(SRC)
+	$(DEL) $(DELARGS) $(OBJ)
 	$(DEL) $(DELARGS) debug
 	$(DEL) $(DELARGS) release
 

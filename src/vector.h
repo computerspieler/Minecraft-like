@@ -16,6 +16,8 @@ public:
 	float x, y, z;
 };
 
+#include <ostream>
+
 std::ostream& operator<<(std::ostream& stream, const Vector3f& vec);
 
 #endif
