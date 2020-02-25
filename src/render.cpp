@@ -24,6 +24,8 @@ int Render::Init(int* argc, char** argv){
 
 	camera = new Camera();
 
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 	return 0;
 }
 

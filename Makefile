@@ -10,7 +10,7 @@ DEL=rm
 DELARGS=-frdv
 
 OBJ=src/main.o src/render.o src/debug.o src/vector.o \
-	src/camera.o
+	src/camera.o src/texture.o
 
 all:
 	@echo "You need to add one of the following target :) : debug / release / clean"
