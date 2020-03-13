@@ -44,10 +44,14 @@ void Render::Draw(){
 	}
 	glPopMatrix();
 
+	glPushMatrix();
+	glTranslatef(0, 0, 0.1);
+
 	for(i = 0; i < (int)gui_draw_callbacks.size(); i++){
 		if(gui_draw_callbacks[i] != nullptr)
 			gui_draw_callbacks[i]();
 	}
+	glPopMatrix();
 
 	glutSwapBuffers();
 }

@@ -3,6 +3,7 @@
 
 #include "debug.h"
 #include "vector.h"
+#include "shapes.h"
 #include "texture.h"
 #include "render.h"
 
@@ -12,12 +13,9 @@ Render::Texture *texture;
 
 void Draw_Test(){
 	texture->Bind();
-	glBegin(GL_QUADS);
-		glTexCoord2f(0.0, 0.0); glVertex2f(1, 1);
-		glTexCoord2f(1.0, 0.0); glVertex2f(2, 1);
-		glTexCoord2f(1.0, 1.0); glVertex2f(2, 2);
-		glTexCoord2f(0.0, 1.0); glVertex2f(1, 2);
-	glEnd();
+	for(int y = 0; y < 10; y++)
+		for(int x = 0; x < 10; x++)
+			Render::Shapes::Draw_Square(Vector2f(x, y), Vector2f(1, 1));
 	glDisable(GL_TEXTURE_2D);
 }
 
@@ -25,16 +23,16 @@ void Draw_Test2(){
 
 	glBegin(GL_QUADS);
 		glColor3f(0.5, 0.5, 0.5);
-		glVertex3f(20, 15, -0.1);
-		glVertex3f( 0, 15, -0.1);
-		glVertex3f( 0,  0, -0.1);
-		glVertex3f(20,  0, -0.1);
+		glVertex3f(20, 15, -0.2);
+		glVertex3f( 0, 15, -0.2);
+		glVertex3f( 0,  0, -0.2);
+		glVertex3f(20,  0, -0.2);
 
 		glColor3f(0.75, 0.75, 0.75);
-		glVertex3f(0, 15, 0.1);
-		glVertex3f(1, 15, 0.1);
-		glVertex3f(1,  0, 0.1);
-		glVertex3f(0,  0, 0.1);
+		glVertex2f(0, 15);
+		glVertex2f(1, 15);
+		glVertex2f(1,  0);
+		glVertex2f(0,  0);
 	glEnd();
 }
 
