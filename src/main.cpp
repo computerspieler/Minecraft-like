@@ -13,8 +13,8 @@ Render::Texture *texture;
 
 void Draw_Test(){
 	texture->Bind();
-	for(int y = 0; y < 10; y++)
-		for(int x = 0; x < 10; x++)
+	for(int y = 0; y < 64; y++)
+		for(int x = 0; x < 16*16; x++)
 			Render::Shapes::Draw_Square(Vector2f(x, y), Vector2f(1, 1));
 	glDisable(GL_TEXTURE_2D);
 }
@@ -48,6 +48,8 @@ void Keyboard_Test(unsigned char key, int x, int y){
 		case 'S': cam->position.y -= SPEED; break;
 		case 'Q': cam->position.x += SPEED; break;
 		case 'D': cam->position.x -= SPEED; break;
+		case '+': cam->zoom       += SPEED; break;
+		case '-': cam->zoom	  -= SPEED; break;
 
 		default:
 			Debug::Info << "Key Pressed : " << key << " (" << (int)key << ")" << std::endl;

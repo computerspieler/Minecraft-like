@@ -4,7 +4,8 @@
 
 using namespace Render;
 
-Camera::Camera(): position(), rotation() {}
+Camera::Camera(): position(), rotation(), zoom(1.0) {}
+
 
 void Camera::Projection_Set(int width, int height){
 	glViewport(0, 0, width, height);

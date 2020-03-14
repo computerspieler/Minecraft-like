@@ -38,6 +38,7 @@ void Render::Draw(){
 
 	glPushMatrix();
 	glTranslatef(camera->position.x, camera->position.y, 0);
+	glScalef(camera->zoom, camera->zoom, 1);
 
 	for(i = 0; i < (int)draw_callbacks.size(); i++){
 		if(draw_callbacks[i] != nullptr){

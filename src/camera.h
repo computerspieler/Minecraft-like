@@ -11,6 +11,7 @@ namespace Render{
 		void Projection_Set(int width, int height);
 
 		Vector2f position, rotation;
+		float zoom;
 	};
 };
 
