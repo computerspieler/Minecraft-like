@@ -4,6 +4,7 @@
 
 #include "debug.h"
 #include "render.h"
+#include "shapes.h"
 
 std::vector<void(*)()> draw_callbacks;
 std::vector<void(*)()> gui_draw_callbacks;
@@ -39,17 +40,19 @@ void Render::Draw(){
 	glTranslatef(camera->position.x, camera->position.y, 0);
 
 	for(i = 0; i < (int)draw_callbacks.size(); i++){
-		if(draw_callbacks[i] != nullptr)
+		if(draw_callbacks[i] != nullptr){
 			draw_callbacks[i]();
+			Render::Shapes::Go_To_Layer(Render::Shapes::NORMAL);
+		}
 	}
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(0, 0, 0.1);
-
 	for(i = 0; i < (int)gui_draw_callbacks.size(); i++){
-		if(gui_draw_callbacks[i] != nullptr)
+		if(gui_draw_callbacks[i] != nullptr){
 			gui_draw_callbacks[i]();
+			Render::Shapes::Go_To_Layer(Render::Shapes::NORMAL);
+		}
 	}
 	glPopMatrix();
 

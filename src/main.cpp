@@ -23,16 +23,12 @@ void Draw_Test2(){
 
 	glBegin(GL_QUADS);
 		glColor3f(0.5, 0.5, 0.5);
-		glVertex3f(20, 15, -0.2);
-		glVertex3f( 0, 15, -0.2);
-		glVertex3f( 0,  0, -0.2);
-		glVertex3f(20,  0, -0.2);
+		Render::Shapes::Go_To_Layer(Render::Shapes::BACKGROUND);
+		Render::Shapes::Draw_Square(Vector2f(0, 0), Vector2f(20, 15));
 
 		glColor3f(0.75, 0.75, 0.75);
-		glVertex2f(0, 15);
-		glVertex2f(1, 15);
-		glVertex2f(1,  0);
-		glVertex2f(0,  0);
+		Render::Shapes::Go_To_Layer(Render::Shapes::FOREGROUND);
+		Render::Shapes::Draw_Square(Vector2f(0, 0), Vector2f(1, 15));
 	glEnd();
 }
 
