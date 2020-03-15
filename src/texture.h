@@ -9,6 +9,11 @@
 namespace Render{
 	class Texture{
 	public:
+		enum Wrap_Format{
+			FILL, REPEAT
+		};
+		typedef enum Wrap_Format Wrap_Format;
+
 		Texture();
 		Texture(std::string filename);
 		Texture(int width, int height);

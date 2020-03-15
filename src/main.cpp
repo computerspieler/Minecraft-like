@@ -7,29 +7,29 @@
 #include "texture.h"
 #include "render.h"
 
-#define SPEED 0.1f
+#define SPEED 0.5f
 
 Render::Texture *texture;
 
 void Draw_Test(){
 	texture->Bind();
-	for(int y = 0; y < 64; y++)
+	for(int y = 0; y < 256; y++)
 		for(int x = 0; x < 16*16; x++)
-			Render::Shapes::Draw_Square(Vector2f(x, y), Vector2f(1, 1));
+			Render::Shapes::Draw_Square(Vector2f(x, y), Vector2f(1, 1), Render::Texture::FILL);
 	glDisable(GL_TEXTURE_2D);
 }
 
 void Draw_Test2(){
 
-	glBegin(GL_QUADS);
-		glColor3f(0.5, 0.5, 0.5);
-		Render::Shapes::Go_To_Layer(Render::Shapes::BACKGROUND);
-		Render::Shapes::Draw_Square(Vector2f(0, 0), Vector2f(20, 15));
-
-		glColor3f(0.75, 0.75, 0.75);
-		Render::Shapes::Go_To_Layer(Render::Shapes::FOREGROUND);
-		Render::Shapes::Draw_Square(Vector2f(0, 0), Vector2f(1, 15));
-	glEnd();
+	texture->Bind();
+	
+	Render::Shapes::Go_To_Layer(Render::Shapes::BACKGROUND);
+	Render::Shapes::Draw_Square(Vector2f(0, 0), Vector2f(80, 60), Render::Texture::REPEAT);
+	
+	glDisable(GL_TEXTURE_2D);
+		
+	//Render::Shapes::Go_To_Layer(Render::Shapes::FOREGROUND);
+	//Render::Shapes::Draw_Square(Vector2f(0, 0), Vector2f(4, 60));
 }
 
 void Idle_Test(){ Render::Draw(); }
@@ -69,7 +69,7 @@ int main(int argc, char** argv){
 	
 	Render::Init(&argc, argv);
 
-	Render::Draw_Callback_Add(Draw_Test);
+	//Render::Draw_Callback_Add(Draw_Test);
 	Render::GUI_Draw_Callback_Add(Draw_Test2);
 
 	glutIdleFunc(Idle_Test);
