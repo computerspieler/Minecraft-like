@@ -6,13 +6,14 @@
 #include "shapes.h"
 #include "texture.h"
 #include "render.h"
+#include "bmp_reader.h"
 
 #define SPEED 0.5f
 
-Render::Texture *texture;
+Render::Texture *texture, *texture_2;
 
 void Draw_Test(){
-	texture->Bind();
+	texture_2->Bind();
 	for(int y = 0; y < 256; y++)
 		for(int x = 0; x < 16*16; x++)
 			Render::Shapes::Draw_Square(Vector2f(x, y), Vector2f(1, 1), Render::Texture::FILL);
@@ -69,21 +70,23 @@ int main(int argc, char** argv){
 	
 	Render::Init(&argc, argv);
 
-	//Render::Draw_Callback_Add(Draw_Test);
+	Render::Draw_Callback_Add(Draw_Test);
 	Render::GUI_Draw_Callback_Add(Draw_Test2);
 
 	glutIdleFunc(Idle_Test);
 	glutKeyboardFunc(Keyboard_Test);
 	glutTimerFunc(1000, Timer_Test, 1);
 	
-	texture = new Render::Texture(8, 8);
+	texture   = new Render::Texture(8, 8);
+	texture_2 = Render::Image::BMP::load_Texture("resources/Grass.bmp");
 
 	for(x = 0; x < 8; x++)
 		for(y = 0; y < 8; y++){
-			texture->Pixel_Set(x, y, (Color){x*16, y*16, 255, 255});
+			texture->Pixel_Set(x, y, (Render::Color){x*16, y*16, 255, 255});
 		}
 
 	texture->Generate();
+	texture_2->Generate();
 
 	glutMainLoop();
 	

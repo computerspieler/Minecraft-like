@@ -1,5 +1,6 @@
 #include <GL/gl.h>
 #include <cstdlib>
+#include <cstring>
 #include <cstdint>
 
 #include "texture.h"
@@ -9,19 +10,20 @@ using namespace Render;
 
 Texture::Texture(): width(0), height(0), raw_texture(NULL){}
 
-Texture::Texture(std::string filename){
-	// TODO: Add a way to load textures from files
-}
-
 Texture::Texture(int width, int height):
 	width(width), height(height){
 
-	raw_texture =(byte*) malloc(width * height * 4 * sizeof(byte));
+	raw_texture =(uchar*) malloc(width * height * 4 * sizeof(uchar));
 	if(raw_texture == NULL)
 		Debug::Error << "Unable to allocate memory for the texture" << std::endl;
 }
 
 void Texture::Generate(){
+	if(raw_texture == NULL){
+		Debug::Error << "Can't generate a texture if there's no more memory" << std::endl;
+		return;
+	}
+
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -38,6 +40,11 @@ Texture::~Texture(){
 }
 
 void Texture::Bind(){
+	if(texture_id <= 0){
+		Debug::Error << "Can't bind a texture if it isn't generated" << std::endl;
+		return;
+	}
+
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glBindTexture(GL_TEXTURE_2D, texture_id);

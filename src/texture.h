@@ -15,7 +15,6 @@ namespace Render{
 		typedef enum Wrap_Format Wrap_Format;
 
 		Texture();
-		Texture(std::string filename);
 		Texture(int width, int height);
 
 		~Texture();
@@ -28,7 +27,7 @@ namespace Render{
 	private:
 		int  width, height;
 		uint texture_id;
-		byte* raw_texture;
+		uchar* raw_texture;
 	};
 };
 

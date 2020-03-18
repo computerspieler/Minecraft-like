@@ -3,8 +3,10 @@
 
 #include "typedef.h"
 
-struct Color{
-	byte red, green, blue, alpha;
-};
+namespace Render{
+	struct Color{
+		uchar red, green, blue, alpha;
+	};
+}
 
 #endif
