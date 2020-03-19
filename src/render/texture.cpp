@@ -4,7 +4,7 @@
 #include <cstdint>
 
 #include "texture.h"
-#include "debug.h"
+#include "../debug.h"
 
 using namespace Render;
 

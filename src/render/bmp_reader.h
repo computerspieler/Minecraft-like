@@ -1,10 +1,9 @@
 #ifndef _BMP_READER_H_
 #define _BMP_READER_H_
 
-#include <fstream>
 #include <string>
 
-#include "typedef.h"
+#include "../typedef.h"
 
 namespace Render {
 	namespace Image{

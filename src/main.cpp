@@ -2,11 +2,11 @@
 #include <GL/freeglut.h>
 
 #include "debug.h"
-#include "vector.h"
-#include "shapes.h"
-#include "texture.h"
-#include "render.h"
-#include "bmp_reader.h"
+#include "math/vector.h"
+#include "render/shapes.h"
+#include "render/texture.h"
+#include "render/render.h"
+#include "render/bmp_reader.h"
 
 #define SPEED 0.5f
 

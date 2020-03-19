@@ -1,8 +1,7 @@
-#include <string>
 #include <fstream>
 
-#include "typedef.h"
-#include "debug.h"
+#include "../typedef.h"
+#include "../debug.h"
 #include "texture.h"
 #include "bmp_reader.h"
 #include "color.h"

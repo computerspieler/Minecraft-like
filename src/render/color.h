@@ -1,7 +1,7 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
-#include "typedef.h"
+#include "../typedef.h"
 
 namespace Render{
 	struct Color{

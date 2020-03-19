@@ -1,7 +1,7 @@
 #ifndef _SHAPES_H_
 #define _SHAPES_H_
 
-#include "vector.h"
+#include "../math/vector.h"
 #include "texture.h"
 
 namespace Render{

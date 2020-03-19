@@ -2,7 +2,7 @@
 
 #include <GL/freeglut.h>
 
-#include "debug.h"
+#include "../debug.h"
 #include "render.h"
 #include "shapes.h"
 
