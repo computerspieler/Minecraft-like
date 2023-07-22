@@ -5,7 +5,8 @@ OBJS=$(patsubst src/%,bin/objs/%.o,$(SRCS))
 CC=gcc
 LD=gcc
 CCFLAGS=-Wall -Wextra -Isrc -c -std=c89
-LDFLAGS=-lGL -lGLU -lglut
+#-std=c89
+LDFLAGS=-lGL -lGLU -lglut -lm
 
 all: debug
 
