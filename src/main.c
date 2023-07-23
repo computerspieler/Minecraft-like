@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 #include <GL/glut.h>
 
@@ -23,6 +24,13 @@ float noise(float x, float y)
         + .5 * perlin(4. * x, 4. * y)
         + .25 * perlin(16. * x, 16. * y)
     ) / 3.75;
+}
+
+long long get_current_time()
+{
+	struct timeval te;
+	gettimeofday(&te, NULL);
+	return te.tv_sec * 1000LL + te.tv_usec / 1000;
 }
 
 void gui_draw()
@@ -49,16 +57,29 @@ void gui_draw()
 
 void entities_draw()
 {
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+	float x, y, z;
 
-    glTranslatef(-cpx, -cpy, -cpz);
-    glRotatef(-crx, 1, 0, 0);
-    glRotatef(-cry, 0, 1, 0);
-    glRotatef(-crz, 0, 0, 1);
+	texture_bind(spritesheet_get_texture(s, 4));
+	for(x = (int) cpx-15; x < cpx+15; x ++)
+		for(z = (int) cpz-15; z < cpz+15; z ++) {
+			y = 5. * noise(x, z);
 
-	texture_bind(animationmanager_get_current_texture(&am));
-    glBegin(GL_QUADS);
+			if(y > 4 || y < 2) continue;
+
+			glTranslatef(x, y, z);
+			glRotatef(-cry, 0, 1, 0);
+			glBegin(GL_QUADS);
+				glTexCoord2f(0., 0.); glVertex3f(0, 0, 0);
+				glTexCoord2f(1., 0.); glVertex3f(1, 0, 0);
+				glTexCoord2f(1., 1.); glVertex3f(1, 1, 0);
+				glTexCoord2f(0., 1.); glVertex3f(0, 1, 0);
+			glEnd();
+
+			glRotatef(cry, 0, 1, 0);
+			glTranslatef(-x, -y, -z);
+		}
+		
+	glBegin(GL_QUADS);
         glTexCoord2f(0., 0.); glVertex3f(-1., 0, 0.);
         glTexCoord2f(1., 0.); glVertex3f( 1., 0, 0.);
         glTexCoord2f(1., 1.); glVertex3f( 1., 1, 0.);
@@ -84,16 +105,19 @@ void display()
     glRotatef(crz, 0, 0, 1);
     glTranslatef(-cpx, -cpy, -cpz);
 
+	glEnable(GL_TEXTURE_2D);
+
 	/* World drawing */
-    glBegin(GL_QUADS);
-        for(x = (int) cpx-15; x < cpx+15; x ++)
-            for(z = (int) cpz-15; z < cpz+15; z ++) {
-                glColor3f(0., 0., .5*noise(x-.9, z-.9)+.5); glVertex3f(x,   5. * noise(x-.9, z-.9)  , z);
-                glColor3f(0., 0., .5*noise(x+.1, z-.9)+.5); glVertex3f(x+1, 5. * noise(x+.1, z-.9)  , z);
-                glColor3f(0., 0., .5*noise(x+.1, z+.1)+.5); glVertex3f(x+1, 5. * noise(x+.1, z+.1), z+1);
-                glColor3f(0., 0., .5*noise(x-.9, z+.1)+.5); glVertex3f(x,   5. * noise(x-.9, z+.1), z+1);
-            }
-    glEnd();
+	for(x = (int) cpx-15; x < cpx+15; x ++)
+		for(z = (int) cpz-15; z < cpz+15; z ++) {
+			texture_bind(spritesheet_get_texture(s, (int)(x*z) & 3));
+    		glBegin(GL_QUADS);
+                glTexCoord2f(0., 0.); glVertex3f(x,   5. * noise(x-.9, z-.9), z);
+                glTexCoord2f(1., 0.); glVertex3f(x+1, 5. * noise(x+.1, z-.9), z);
+                glTexCoord2f(1., 1.); glVertex3f(x+1, 5. * noise(x+.1, z+.1), z+1);
+                glTexCoord2f(0., 1.); glVertex3f(x,   5. * noise(x-.9, z+.1), z+1);
+    		glEnd();
+		}
 
 	entities_draw();
 
@@ -135,9 +159,14 @@ void Keyboard_Test(unsigned char key, int x, int y)
 
 void timer_func(int _)
 {
+	cpz -= SPEED;
     animationmanager_update(&am, .01);
     glutTimerFunc(10, timer_func, 0);
+
+	long long start = get_current_time();
     display();
+	long long end = get_current_time();
+	printf("Time per frame: %lld ms\n", end - start);
 }
 
 void reshape_func(int width, int height)
@@ -163,7 +192,7 @@ int main(int argc, char* argv[])
     glutDisplayFunc(display);
 
     cpx = 0;
-    cpy = 1;
+    cpy = 6;
     cpz = 0;
 
 	crx = 0.;

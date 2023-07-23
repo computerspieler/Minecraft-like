@@ -123,9 +123,9 @@ Texture texture_load(FILE *f)
 
 				case 24:
 					pixel_color.alpha = 255;	
-					fread(&pixel_color.red,   1, 1, f);
-					fread(&pixel_color.green, 1, 1, f);
 					fread(&pixel_color.blue,  1, 1, f);
+					fread(&pixel_color.green, 1, 1, f);
+					fread(&pixel_color.red,   1, 1, f);
 					break;
 
 				case 32:
@@ -139,7 +139,7 @@ Texture texture_load(FILE *f)
 					fprintf(stderr, "Unsupported color depth\n");
 			        return texture_create(0, 0);
 			}
-			texture_put_pixel(&output, pixel_x, pixel_y, pixel_color);
+			texture_put_pixel(&output, pixel_x, dib_header.height-pixel_y-1, pixel_color);
 		}
 	}
 
