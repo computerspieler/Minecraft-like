@@ -41,45 +41,47 @@ float vec2f_dot_2(Vec2f v1, Vec2f v2)
 { return v1.x * v2.x + v1.y * v2.y; }
 
 
-Vec2i vec2i_add(Vec2i v1, Vec2i v2)
+Vec3f vec3f_add(Vec3f v1, Vec3f v2)
 {
-    Vec2i output;
+	Vec3f out;
 
-    output.x = v1.x + v2.x;
-    output.y = v1.y + v2.y;
+	out.x = v1.x + v2.x;
+	out.y = v1.y + v2.y;
+	out.z = v1.z + v2.z;
 
-    return output;
+	return out;
+}
+Vec3f vec3f_sub(Vec3f v1, Vec3f v2)
+{
+	Vec3f out;
+
+	out.x = v1.x - v2.x;
+	out.y = v1.y - v2.y;
+	out.z = v1.z - v2.z;
+
+	return out;
+}
+Vec3f vec3f_mul(Vec3f v1, Vec3f v2)
+{
+	Vec3f out;
+
+	out.x = v1.x * v2.x;
+	out.y = v1.y * v2.y;
+	out.z = v1.z * v2.z;
+
+	return out;
+}
+Vec3f vec3f_div(Vec3f v1, Vec3f v2)
+{
+	Vec3f out;
+
+	out.x = v1.x / v2.x;
+	out.y = v1.y / v2.y;
+	out.z = v1.z / v2.z;
+
+	return out;
 }
 
-Vec2i vec2i_sub(Vec2i v1, Vec2i v2)
-{
-    Vec2i output;
+float vec3f_dot_2(Vec3f v1, Vec3f v2)
+{ return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
 
-    output.x = v1.x - v2.x;
-    output.y = v1.y - v2.y;
-
-    return output;
-}
-
-Vec2i vec2i_mul(Vec2i v1, Vec2i v2)
-{
-    Vec2i output;
-
-    output.x = v1.x * v2.x;
-    output.y = v1.y * v2.y;
-
-    return output;
-}
-
-Vec2i vec2i_div(Vec2i v1, Vec2i v2)
-{
-    Vec2i output;
-
-    output.x = v1.x / v2.x;
-    output.y = v1.y / v2.y;
-
-    return output;
-}
-
-int vec2i_dot_2(Vec2i v1, Vec2i v2)
-{ return v1.x * v2.x + v1.y * v2.y; }

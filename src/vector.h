@@ -15,18 +15,20 @@ Vec2f vec2f_div(Vec2f, Vec2f);
 
 float vec2f_dot_2(Vec2f, Vec2f);
 
-typedef struct Vec2i Vec2i;
-struct Vec2i
+
+typedef struct Vec3f Vec3f;
+struct Vec3f
 {
-    int x;
-    int y;
+    float x;
+    float y;
+    float z;
 };
 
-Vec2i vec2i_add(Vec2i, Vec2i);
-Vec2i vec2i_sub(Vec2i, Vec2i);
-Vec2i vec2i_mul(Vec2i, Vec2i);
-Vec2i vec2i_div(Vec2i, Vec2i);
+Vec3f vec3f_add(Vec3f, Vec3f);
+Vec3f vec3f_sub(Vec3f, Vec3f);
+Vec3f vec3f_mul(Vec3f, Vec3f);
+Vec3f vec3f_div(Vec3f, Vec3f);
 
-int vec2i_dot_2(Vec2i, Vec2i);
+float vec3f_dot_2(Vec3f, Vec3f);
 
 #endif
