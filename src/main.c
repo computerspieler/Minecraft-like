@@ -51,7 +51,7 @@ BiomeType biome_noise(float x, float y)
 
 Texture* get_ground_texture(float x, float y)
 {
-	switch(biome_noise(x, y)) {
+	switch(biome_noise(x + .5, y + .5)) {
 	case SEA: return spritesheet_get_texture(s1, 1);
 	case BEACH: return spritesheet_get_texture(s1, 3);
 	case DEFAULT: return spritesheet_get_texture(s1, 0);
@@ -160,7 +160,7 @@ void gui_draw()
 void entities_draw()
 {
 	float x, y, z;
-/*
+
 	texture_bind(spritesheet_get_texture(s1, 4));
 	for(x = (int) cam.pos.x - 25; x < cam.pos.x + 25; x ++) {
 		for(z = (int) cam.pos.z - 25; z < cam.pos.z + 25; z ++) {
@@ -183,7 +183,7 @@ void entities_draw()
 			glTranslatef(-x, -y, -z);
 		}
 	}
-*/
+
 	/* Player drawing */
 	texture_bind(spritesheet_get_texture(sp, 0));
 	glPushMatrix();

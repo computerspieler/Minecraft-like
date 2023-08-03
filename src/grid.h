@@ -16,8 +16,8 @@ struct Grid
     Texture* (*tex)(float, float);
 
     GLfloat *vertex_array;
-    GLuint *indices_array;
     Texture* *texture_array;
+    GLfloat *tex_coord_array;
 
     int cache_width;
     int cache_height;
