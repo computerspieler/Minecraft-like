@@ -11,8 +11,8 @@
 #include "animation.h"
 #include "perlin.h"
 #include "vector.h"
-#include "billboard.h"
 #include "camera.h"
+#include "biome.h"
 
 static SpriteSheet s1;
 static SpriteSheet sp;
@@ -27,15 +27,53 @@ int cam_max_x, cam_min_x;
 int cam_max_z, cam_min_z;
 float fog_color[] = {.4, .58, .93, 1};
 
-float noise(float x, float y)
+BiomeType biome_noise(float x, float y)
 {
 	x += 1./32.f;
 	y += 1./32.f;
+	
+	float perlin_noise = perlin(x / 128. , y / 128.);
 
-	return (3.  * perlin(x / 8. , y / 8.)
-		+.5  * perlin(4. * x , 4. * y)
-		+.25 * perlin(16. * x, 16. * y)
-	) / 3.75;
+	if(perlin_noise < .1f) return SEA;
+	if(perlin_noise < .125f) return BEACH;
+	if(perlin_noise < .25f) return DEFAULT;
+	return MOUNTAIN;
+}
+
+Texture* get_ground_texture(float x, float y)
+{
+	switch(biome_noise(x, y)) {
+	case SEA: return spritesheet_get_texture(s1, 1);
+	case BEACH: return spritesheet_get_texture(s1, 3);
+	case DEFAULT: return spritesheet_get_texture(s1, 0);
+	case MOUNTAIN: return spritesheet_get_texture(s1, 2);
+	}
+	return NULL;
+}
+
+
+float noise(float x, float y)
+{
+	float p1, p2, p3;
+	BiomeType b;
+
+	b = biome_noise(x, y);
+
+	x += 1./32.f;
+	y += 1./32.f;
+
+	p1 = perlin(x / 128. , y / 128.);
+	p2 = perlin( 4. * x,  4. * y);
+	p3 = perlin(16. * x, 16. * y);
+
+	switch(b) {
+	case SEA: return .1f;
+	case BEACH: return 15. * (p1 - .1) + 0.0625 * p2 + .1f; 
+	case DEFAULT: return 15. * (p1 - .125) + .125 * p2 + .0625 * p3;
+	case MOUNTAIN: return 15. * (p1 - .25) + .5 + 2.5 * p2 + .125 * p3 + 1.25;
+	}
+
+	return -1;
 }
 
 float noise_middle(float x, float y)
@@ -109,7 +147,7 @@ void entities_draw()
 	texture_bind(spritesheet_get_texture(s1, 4));
 	for(x = (int) cam.pos.x + cam_min_x; x < cam.pos.x + cam_max_x; x ++) {
 		for(z = (int) cam.pos.z + cam_min_z; z < cam.pos.z + cam_max_z; z ++) {
-			y = 5. * noise_middle(x, z);
+			y = noise_middle(x, z);
 
 			if(y > 4 || y < 2)
 				continue;
@@ -130,10 +168,21 @@ void entities_draw()
 	}
 
 	/* Player drawing */
-	Billboard b;
-	b.pos = player_pos;
-	b.tex = spritesheet_get_texture(sp, 0);
-	billboard_draw(&b);
+	texture_bind(spritesheet_get_texture(sp, 0));
+
+	glPushMatrix();
+
+	glTranslatef(player_pos.x, player_pos.y, player_pos.z);
+	glRotatef(-cam.rot.y, 0, 1, 0);
+
+	glBegin(GL_QUADS);
+		glTexCoord2f(0., 0.); glVertex3f(-.5, 0, 0);
+		glTexCoord2f(1., 0.); glVertex3f( .5, 0, 0);
+		glTexCoord2f(1., 1.); glVertex3f( .5, 1, 0);
+		glTexCoord2f(0., 1.); glVertex3f(-.5, 1, 0);
+	glEnd();
+
+	glPopMatrix();
 }
 
 void display()
@@ -164,13 +213,13 @@ void display()
 
 	for(x = floor(cam.pos.x) + cam_min_x; x <= floor(cam.pos.x) + cam_max_x; x ++) {
 		for(z = floor(cam.pos.z) + cam_min_z; z <= floor(cam.pos.z) + cam_max_z; z ++) {
-			texture_bind(spritesheet_get_texture(s1, (int)(x+z) & 3));
+			texture_bind(get_ground_texture(x, z));
 
 			glBegin(GL_QUADS);
-				glTexCoord2f(0., 0.); glVertex3f(x,   5. * noise(x,   z),   z);
-				glTexCoord2f(1., 0.); glVertex3f(x+1, 5. * noise(x+1, z),   z);
-				glTexCoord2f(1., 1.); glVertex3f(x+1, 5. * noise(x+1, z+1), z+1);
-				glTexCoord2f(0., 1.); glVertex3f(x,   5. * noise(x,   z+1), z+1);
+				glTexCoord2f(0., 0.); glVertex3f(x,   noise(x,   z),   z);
+				glTexCoord2f(1., 0.); glVertex3f(x+1, noise(x+1, z),   z);
+				glTexCoord2f(1., 1.); glVertex3f(x+1, noise(x+1, z+1), z+1);
+				glTexCoord2f(0., 1.); glVertex3f(x,   noise(x,   z+1), z+1);
 			glEnd();
 		}
 	}
@@ -239,7 +288,7 @@ void Keyboard_Test(unsigned char key, int x, int y)
 	while(cam.rot.y >= 360.)
 		cam.rot.y -= 360.;
 
-	player_pos.y = 5. * noise_floor(player_pos.x, player_pos.z);
+	player_pos.y = noise_floor(player_pos.x, player_pos.z);
 
 	player_dir.x =  sin(cam.rot.y * M_PI / 180.);
 	player_dir.y = -cos(cam.rot.y * M_PI / 180.);

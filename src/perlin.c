@@ -1,4 +1,4 @@
-/* Stolen from the wikipedia page on Perlin noise*/
+/* Stolen from the wikipedia page on Perlin noise */
 
 #include <math.h>
 
