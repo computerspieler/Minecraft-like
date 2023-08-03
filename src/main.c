@@ -1,7 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <math.h>
+
+#ifndef _MSC_VER
+#include <sys/time.h>
+#endif
+
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
 
 #include <GL/glut.h>
 
@@ -13,8 +20,9 @@
 #include "vector.h"
 #include "camera.h"
 #include "biome.h"
+#include "grid.h"
 
-static SpriteSheet s1;
+SpriteSheet s1;
 static SpriteSheet sp;
 static AnimationManager am;
 static AnimationCycle ac;
@@ -22,17 +30,18 @@ static AnimationCycle ac;
 Camera cam;
 Vec3f player_pos;
 Vec2f player_dir;
+Grid g;
 
-int cam_max_x, cam_min_x;
-int cam_max_z, cam_min_z;
 float fog_color[] = {.4, .58, .93, 1};
 
 BiomeType biome_noise(float x, float y)
 {
+	float perlin_noise;
+
 	x += 1./32.f;
 	y += 1./32.f;
 	
-	float perlin_noise = perlin(x / 128. , y / 128.);
+	perlin_noise = perlin(x / 128. , y / 128.);
 
 	if(perlin_noise < .1f) return SEA;
 	if(perlin_noise < .125f) return BEACH;
@@ -78,8 +87,10 @@ float noise(float x, float y)
 
 float noise_middle(float x, float y)
 {
-	float fx = floor(x);
-	float fy = floor(y);
+	float fx, fy;
+
+	fx = floor(x);
+	fy = floor(y);
 
 	return (noise(fx + 1, fy) + noise(fx, fy + 1)) * .5;
 }
@@ -112,9 +123,15 @@ float noise_floor(float x, float y)
 
 long long get_current_time()
 {
+#ifndef _MSC_VER
 	struct timeval te;
 	gettimeofday(&te, NULL);
 	return te.tv_sec * 1000LL + te.tv_usec / 1000;
+#else
+	SYSTEMTIME t;
+	GetSystemTime(&t);
+	return t.wSecond * 1000LL + t.wMilliseconds;
+#endif
 }
 
 void gui_draw()
@@ -143,10 +160,10 @@ void gui_draw()
 void entities_draw()
 {
 	float x, y, z;
-
+/*
 	texture_bind(spritesheet_get_texture(s1, 4));
-	for(x = (int) cam.pos.x + cam_min_x; x < cam.pos.x + cam_max_x; x ++) {
-		for(z = (int) cam.pos.z + cam_min_z; z < cam.pos.z + cam_max_z; z ++) {
+	for(x = (int) cam.pos.x - 25; x < cam.pos.x + 25; x ++) {
+		for(z = (int) cam.pos.z - 25; z < cam.pos.z + 25; z ++) {
 			y = noise_middle(x, z);
 
 			if(y > 4 || y < 2)
@@ -166,23 +183,23 @@ void entities_draw()
 			glTranslatef(-x, -y, -z);
 		}
 	}
-
+*/
 	/* Player drawing */
 	texture_bind(spritesheet_get_texture(sp, 0));
-
 	glPushMatrix();
 
 	glTranslatef(player_pos.x, player_pos.y, player_pos.z);
 	glRotatef(-cam.rot.y, 0, 1, 0);
 
 	glBegin(GL_QUADS);
-		glTexCoord2f(0., 0.); glVertex3f(-.5, 0, 0);
-		glTexCoord2f(1., 0.); glVertex3f( .5, 0, 0);
-		glTexCoord2f(1., 1.); glVertex3f( .5, 1, 0);
-		glTexCoord2f(0., 1.); glVertex3f(-.5, 1, 0);
+		glTexCoord2f(0., 0.); glVertex3f(-.25,  0, 0);
+		glTexCoord2f(1., 0.); glVertex3f( .25,  0, 0);
+		glTexCoord2f(1., 1.); glVertex3f( .25, .5, 0);
+		glTexCoord2f(0., 1.); glVertex3f(-.25, .5, 0);
 	glEnd();
 
 	glPopMatrix();
+
 }
 
 void display()
@@ -194,35 +211,25 @@ void display()
 
 	glEnable(GL_FOG);
 	glEnable(GL_DEPTH_TEST);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glPushMatrix();
+
+	glEnable(GL_TEXTURE_2D);
 
 	glRotatef(cam.rot.x, 1, 0, 0);
 	glRotatef(cam.rot.y, 0, 1, 0);
 	glRotatef(cam.rot.z, 0, 0, 1);
-	glTranslatef(-cam.pos.x, -cam.pos.y, -cam.pos.z);
-
-	glEnable(GL_TEXTURE_2D);
 
 	/* World drawing */
-	/* TODO: Clipping */
-	cam_min_x = -25;
-	cam_max_x =  25;
-	cam_min_z = -25;
-	cam_max_z =  25;
+	glPushMatrix();
+	glTranslatef(player_pos.x-cam.pos.x, -cam.pos.y, player_pos.z-cam.pos.z);
+	grid_draw(&g, player_pos.x, player_pos.z);
+	glPopMatrix();
 
-	for(x = floor(cam.pos.x) + cam_min_x; x <= floor(cam.pos.x) + cam_max_x; x ++) {
-		for(z = floor(cam.pos.z) + cam_min_z; z <= floor(cam.pos.z) + cam_max_z; z ++) {
-			texture_bind(get_ground_texture(x, z));
-
-			glBegin(GL_QUADS);
-				glTexCoord2f(0., 0.); glVertex3f(x,   noise(x,   z),   z);
-				glTexCoord2f(1., 0.); glVertex3f(x+1, noise(x+1, z),   z);
-				glTexCoord2f(1., 1.); glVertex3f(x+1, noise(x+1, z+1), z+1);
-				glTexCoord2f(0., 1.); glVertex3f(x,   noise(x,   z+1), z+1);
-			glEnd();
-		}
-	}
+	glTranslatef(-cam.pos.x, -cam.pos.y, -cam.pos.z);
 
 	entities_draw();
 
@@ -231,6 +238,8 @@ void display()
 	gui_draw();
 
 	glDisable(GL_TEXTURE_2D);
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	glutSwapBuffers();
 }
@@ -242,9 +251,9 @@ void display()
 
 void update_camera_position()
 {
-	cam.pos.x = player_pos.x + 3. * sin(-cam.rot.y * M_PI / 180.);
-	cam.pos.z = player_pos.z + 3. * cos(-cam.rot.y * M_PI / 180.);
-	cam.pos.y = player_pos.y + 3;
+	cam.pos.x = player_pos.x + 2. * sin(-cam.rot.y * M_PI / 180.);
+	cam.pos.z = player_pos.z + 2. * cos(-cam.rot.y * M_PI / 180.);
+	cam.pos.y = player_pos.y + 2;
 }
 
 void Keyboard_Test(unsigned char key, int x, int y)
@@ -299,12 +308,14 @@ void Keyboard_Test(unsigned char key, int x, int y)
 
 void timer_func(int _)
 {
+	long long start, end;
+
 	animationmanager_update(&am, .01);
 	glutTimerFunc(10, timer_func, 0);
 
-	long long start = get_current_time();
+	start = get_current_time();
 	display();
-	long long end = get_current_time();
+	end = get_current_time();
 	printf("Time per frame: %lld ms\n", end - start);
 }
 
@@ -318,6 +329,7 @@ void reshape_func(int width, int height)
 int main(int argc, char* argv[])
 {
 	uint i;
+	FILE *f;
 
 	glutInit(&argc, argv);
 
@@ -334,18 +346,18 @@ int main(int argc, char* argv[])
 	player_dir.x = 0;
 	player_dir.y = -1;
 
-	cam.rot.x = 30;
+	cam.rot.x = 0;
 	cam.rot.y = 0;
 	cam.rot.z = 0;
 
 	update_camera_position();
 
-	FILE *f = fopen("resources/Grass.bmp", "r");
+	f = fopen("resources/Grass.bmp", "rb");
 	s1 = spritesheet_create(texture_load(f), 8, 8);
 	fclose(f);
 	spritesheet_generate(s1);
 
-	f = fopen("resources/Player.bmp", "r");
+	f = fopen("resources/Player.bmp", "rb");
 	sp = spritesheet_create(texture_load(f), 8, 8);
 	fclose(f);
 	spritesheet_generate(sp);
@@ -356,13 +368,16 @@ int main(int argc, char* argv[])
 
 	am = animationmanager_create();
 	animationmanager_enqueue(&am, &ac);
+
+	g = grid_init(noise, get_ground_texture, 20, 20);
+
 	
 	glutTimerFunc(100, timer_func, 0);
 	glutReshapeFunc(reshape_func);
 	glutKeyboardFunc(Keyboard_Test);
 
 	glFogi(GL_FOG_MODE, GL_LINEAR);
-	glFogf(GL_FOG_END, 17);
+	glFogf(GL_FOG_END, 10);
 	glFogfv(GL_FOG_COLOR, fog_color);
 
 	glutMainLoop();

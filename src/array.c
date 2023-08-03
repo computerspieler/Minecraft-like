@@ -36,7 +36,7 @@ void array_push(Array* s, void* elt_ptr)
 		s->array = realloc(s->array, s->physical_size * s->element_size);
 	}
 
-	memcpy(s->array + (s->logical_size * s->element_size), elt_ptr, s->element_size);
+	memcpy((char*) s->array + (s->logical_size * s->element_size), elt_ptr, s->element_size);
 	s->logical_size ++;
 }
 
@@ -50,7 +50,7 @@ void array_first_pop(Array* s, void* elt_ptr)
 		
     s->logical_size --;
     memmove(
-        s->array, s->array + s->element_size,
+        s->array, (char*) s->array + s->element_size,
         s->logical_size * s->element_size
     );
 }

@@ -15,8 +15,8 @@ typedef struct FileHeader{
 
 typedef struct DIBHeader{
 	uint header_size;
-		int width;
-		int height;
+	int width;
+	int height;
 	ushort color_planes;
 	ushort color_depth;
 	uint   color_palette;
@@ -101,10 +101,16 @@ Texture texture_load(FILE *f)
 					if(pixel_x % 8 == 0)
 						fread(&pixel_buffer, 1, 1, f);
 					
-					if(pixel_buffer & (0x80 >> (pixel_x % 8)))
-						pixel_color = (Color) {255, 255, 255, 255};
-					else
-						pixel_color = (Color) {0, 0, 0, 255};
+					if(pixel_buffer & (0x80 >> (pixel_x % 8))) {
+						pixel_color.red = 255;
+						pixel_color.green = 255;
+						pixel_color.blue = 255;
+					} else {
+						pixel_color.red = 0;
+						pixel_color.green = 0;
+						pixel_color.blue = 0;
+					}
+					pixel_color.alpha = 255;
 					break;
 
 				case 8:
@@ -113,8 +119,12 @@ Texture texture_load(FILE *f)
 					    For now, we will suppose that 8 bit depth and 0 color palette
 					    = 8 bits grayscale bitmap
                     */
-					if(dib_header.color_palette == 0)
-						pixel_color = (Color) {pixel_buffer, pixel_buffer, pixel_buffer, 255};
+					if(dib_header.color_palette == 0) {
+						pixel_color.red = pixel_buffer;
+						pixel_color.green = pixel_buffer;
+						pixel_color.blue = pixel_buffer;
+						pixel_color.alpha = 255;
+					}
 					break;
 
 				case 16:

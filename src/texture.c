@@ -1,6 +1,9 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
 #include <GL/gl.h>
 
 #include "texture.h"

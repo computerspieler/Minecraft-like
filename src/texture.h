@@ -1,6 +1,9 @@
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
+#ifdef _MSC_VER
+#include <Windows.h>
+#endif
 #include <GL/gl.h>
 
 #include "typedef.h"

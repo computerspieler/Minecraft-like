@@ -9,15 +9,16 @@ SpriteSheet spritesheet_create(Texture t, int cell_width, int cell_height)
     int i, j;
     int x, y;
     SpriteSheet output;
+    int texture_per_col, texture_per_row;
 
     assert(t.width % cell_width == 0);
     assert(t.height % cell_height == 0);
 
-    int texture_per_col = t.width / cell_width;
-    int texture_per_row = t.height / cell_height;
+    texture_per_col = t.width / cell_width;
+    texture_per_row = t.height / cell_height;
 
     output.count = texture_per_row * texture_per_col;
-    output.textures = malloc(output.count * sizeof(Texture));
+    output.textures = (Texture*) malloc(output.count * sizeof(Texture));
 
     assert(output.textures != NULL);
 
