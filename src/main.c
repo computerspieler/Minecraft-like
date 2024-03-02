@@ -60,6 +60,8 @@ Texture* get_ground_texture(float x, float y)
 	return NULL;
 }
 
+float max(float a, float b)
+{ return a < b ? b : a; }
 
 float noise(float x, float y)
 {
@@ -77,9 +79,9 @@ float noise(float x, float y)
 
 	switch(b) {
 	case SEA: return .1f;
-	case BEACH: return 15. * (p1 - .1) + 0.0625 * p2 + .1f; 
-	case DEFAULT: return 15. * (p1 - .125) + .125 * p2 + .0625 * p3;
-	case MOUNTAIN: return 15. * (p1 - .25) + .5 + 2.5 * p2 + .125 * p3 + 1.25;
+	case BEACH: return max(.1, p1 + 0.625 * p2 + 0.125 * p3); 
+	case DEFAULT: return max(.125, 8.*p1 + 1.25 * p2);
+	case MOUNTAIN: return max(.25, 20.*p1 + 3.25 * p2 + 0.125 * p3);
 	}
 
 	return -1;
@@ -157,11 +159,27 @@ void gui_draw()
 	glPopMatrix();
 }
 
+GLfloat vertices[] = {
+    0, 0, 0.5,
+    1, 0, 0.5,
+    1, 1, 0.5,
+    0, 1, 0.5,
+};
+
+GLfloat tex[] = {
+    0., 0.,
+    1., 0.,
+    1., 1.,
+    0., 1.,
+};
+
 void entities_draw()
 {
 	float x, y, z;
 
 	texture_bind(spritesheet_get_texture(s1, 4));
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
 	for(x = (int) cam.pos.x - 25; x < cam.pos.x + 25; x ++) {
 		for(z = (int) cam.pos.z - 25; z < cam.pos.z + 25; z ++) {
 			y = noise_middle(x, z);
@@ -172,12 +190,7 @@ void entities_draw()
 			glTranslatef(x, y, z);
 			glRotatef(-cam.rot.y, 0, 1, 0);
 
-			glBegin(GL_QUADS);
-				glTexCoord2f(0., 0.); glVertex3f(0, 0, 0.5);
-				glTexCoord2f(1., 0.); glVertex3f(1, 0, 0.5);
-				glTexCoord2f(1., 1.); glVertex3f(1, 1, 0.5);
-				glTexCoord2f(0., 1.); glVertex3f(0, 1, 0.5);
-			glEnd();
+            glDrawArrays(GL_QUADS, 0, 4);
 
 			glRotatef(cam.rot.y, 0, 1, 0);
 			glTranslatef(-x, -y, -z);
@@ -204,8 +217,6 @@ void entities_draw()
 
 void display()
 {
-	int x, z;
-
 	glClearColor(.4, .58, .93, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -258,6 +269,9 @@ void update_camera_position()
 
 void Keyboard_Test(unsigned char key, int x, int y)
 {
+    (void) x;
+    (void) y;
+
 	/* Put the characters upper case */
 	if(key >= 'a' && key <= 'z')
 		key -= ('a' - 'A');
@@ -306,9 +320,11 @@ void Keyboard_Test(unsigned char key, int x, int y)
 }
 
 
-void timer_func(int _)
+void timer_func(int dt)
 {
 	long long start, end;
+
+    (void) dt;
 
 	animationmanager_update(&am, .01);
 	glutTimerFunc(10, timer_func, 0);
@@ -369,7 +385,7 @@ int main(int argc, char* argv[])
 	am = animationmanager_create();
 	animationmanager_enqueue(&am, &ac);
 
-	g = grid_init(noise, get_ground_texture, 20, 20);
+	g = grid_init(noise, get_ground_texture, 30, 30);
 
 	
 	glutTimerFunc(100, timer_func, 0);
